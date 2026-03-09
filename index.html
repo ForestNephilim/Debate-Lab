@@ -518,6 +518,21 @@ textarea{min-height:80px;resize:vertical}
 @media(min-width:480px){.quick-grid{grid-template-columns:1fr 1fr}}
 @media(min-width:680px){.page{padding:32px 24px 100px}}
 </style>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<style>
+/* Google Translate widget — tuck it into the topbar */
+#google_translate_element .goog-te-gadget-simple{
+  background:var(--card)!important;border:1px solid var(--border)!important;
+  border-radius:6px!important;padding:4px 10px!important;font-size:.82rem!important;
+}
+#google_translate_element .goog-te-gadget-simple a,
+#google_translate_element .goog-te-gadget-simple span{
+  color:var(--text2)!important;font-family:var(--font-d)!important;
+  font-weight:700!important;letter-spacing:.06em!important;text-decoration:none!important;
+}
+.goog-te-banner-frame{display:none!important}
+body{top:0!important}
+</style>
 </head>
 <body data-theme="dark" data-accent="yellow">
 
@@ -525,8 +540,7 @@ textarea{min-height:80px;resize:vertical}
 <header id="topbar">
   <div class="topbar-logo">Debate<span>Lab</span></div>
   <div class="topbar-right">
-    <button class="lang-toggle active-lang" id="lang-en-btn" onclick="setLang('en')">EN</button>
-    <button class="lang-toggle" id="lang-jp-btn" onclick="setLang('jp')">JP</button>
+    <div id="google_translate_element"></div>
     <button class="hamburger-btn" id="hamburger-btn" onclick="toggleNav()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -1159,8 +1173,7 @@ function applyUserPrefs(){
   document.querySelectorAll('.colour-dot').forEach(d=>d.classList.toggle('selected',d.dataset.colour===USER.accent));
   const goalSel=document.getElementById('daily-goal-select');
   if(goalSel) goalSel.value=USER.dailyGoal;
-  document.getElementById('lang-en-btn').classList.toggle('active-lang',USER.lang==='en');
-  document.getElementById('lang-jp-btn').classList.toggle('active-lang',USER.lang==='jp');
+
 }
 
 /* ----------------------------------------------------------------
@@ -1202,19 +1215,15 @@ function goAdmin(){
 }
 
 /* ----------------------------------------------------------------
-   LANGUAGE TOGGLE
+   GOOGLE TRANSLATE WIDGET
    ---------------------------------------------------------------- */
-function setLang(lang,save=true){
-  USER.lang=lang;
-  if(save) saveUser(USER);
-  document.getElementById('lang-en-btn').classList.toggle('active-lang',lang==='en');
-  document.getElementById('lang-jp-btn').classList.toggle('active-lang',lang==='jp');
-  renderVocabWithTags(document.getElementById('vocab-search').value);
-  renderGrammar();
-  renderCases();
-  renderTemplates();
-  renderHomework();
-  renderAnnouncements();
+function googleTranslateElementInit(){
+  new google.translate.TranslateElement({
+    pageLanguage:'en',
+    includedLanguages:'ja',
+    layout:google.translate.TranslateElement.InlineLayout.SIMPLE,
+    autoDisplay:false
+  },'google_translate_element');
 }
 
 /* ----------------------------------------------------------------
