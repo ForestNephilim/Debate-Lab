@@ -987,6 +987,21 @@ body{top:0!important}
         </div>
         <button class="btn btn-primary btn-sm" onclick="addVocab()">Add Word</button>
       </div>
+
+      <div class="admin-add-form" style="margin-top:16px">
+        <div class="admin-add-title">📋 Bulk Upload Words</div>
+        <div style="font-size:.82rem;color:var(--text2);margin-bottom:10px;line-height:1.6">
+          One word per line, fields separated by <code>|</code>:<br>
+          <code style="color:var(--accent)">Word | Part of Speech | Definition | Japanese | Example Sentence</code><br>
+          Japanese and Example are optional — you can leave them blank.
+        </div>
+        <textarea id="bulk-vocab-input" rows="6" placeholder="Absolutely | adverb | Completely; without doubt | 完全に | I absolutely agree with your opinion.&#10;Academic | adjective | Relating to education or study | 学問の | She received an academic award." style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px;color:var(--text);font-size:.84rem;font-family:monospace;resize:vertical;box-sizing:border-box"></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+          <div><label class="form-label" style="margin:0 6px 0 0">Tag / Unit (optional)</label><input type="text" id="bulk-vocab-tag" placeholder="Unit 1" style="width:120px"></div>
+          <button class="btn btn-primary btn-sm" onclick="bulkAddVocab()" style="margin-top:0">⬆ Import Words</button>
+          <span id="bulk-result" style="font-size:.82rem;color:var(--accent)"></span>
+        </div>
+      </div>
       <div id="admin-vocab-list"></div>
     </div>
 
@@ -1071,6 +1086,18 @@ body{top:0!important}
 </div>
 
 <div id="toast"></div>
+
+<!-- ADD TO MY CARDS MODAL -->
+<div class="modal-overlay" id="add-to-mycards-overlay" onclick="closeAddToMyCards()" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center">
+  <div class="modal-sheet" onclick="event.stopPropagation()" style="background:var(--bg2);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:24px 20px 40px;width:100%;max-width:480px;border-top:1px solid var(--border)">
+    <div style="font-family:var(--font-d);font-weight:900;font-size:1.1rem;text-transform:uppercase;margin-bottom:4px">➕ Add to My Cards</div>
+    <div id="atmc-word-preview" style="font-size:.9rem;color:var(--text2);margin-bottom:16px"></div>
+    <div style="font-size:.82rem;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em">Choose a pack:</div>
+    <div id="atmc-pack-list" style="display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto;margin-bottom:16px"></div>
+    <button class="btn btn-secondary btn-sm" onclick="openMyPackModalFromVocab()">+ Create New Pack</button>
+    <button class="btn btn-secondary btn-sm" style="margin-left:8px" onclick="closeAddToMyCards()">Cancel</button>
+  </div>
+</div>
 
 <!-- ================================================================
      JAVASCRIPT
@@ -1570,6 +1597,7 @@ function renderVocab(search=''){
         <span class="vocab-word">${esc(v.word)}</span>
         <span class="vocab-pos">${esc(v.pos)}</span>
         ${v.tag?`<span class="vocab-tag">${esc(v.tag)}</span>`:''}
+        <button class="btn btn-secondary btn-sm" style="margin-left:auto;font-size:.72rem;padding:3px 10px;flex-shrink:0" onclick="event.stopPropagation();openAddToMyCards(${JSON.stringify(v)})" title="Add to My Cards">＋ My Cards</button>
       </div>
       <div class="vocab-def">${esc(v.def)}</div>
       ${showJp&&v.jp?`<div class="vocab-jp-text">${esc(v.jp)}</div>`:''}
@@ -2439,6 +2467,90 @@ function deletePack(packId){
 /* ----------------------------------------------------------------
    ADMIN — VOCABULARY
    ---------------------------------------------------------------- */
+
+/* ----------------------------------------------------------------
+   BULK VOCAB UPLOAD
+   ---------------------------------------------------------------- */
+function bulkAddVocab(){
+  const raw = document.getElementById('bulk-vocab-input').value.trim();
+  const tag  = document.getElementById('bulk-vocab-tag').value.trim();
+  const result = document.getElementById('bulk-result');
+  if(!raw){ showToast('Paste some words first.'); return; }
+  const POS_LIST = ['noun','verb','adjective','adverb','phrase'];
+  const lines = raw.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  let added=0, skipped=0;
+  lines.forEach(line=>{
+    const parts = line.split('|').map(p=>p.trim());
+    const word = parts[0]||'';
+    const posRaw = (parts[1]||'noun').toLowerCase();
+    const def  = parts[2]||'';
+    const jp   = parts[3]||'';
+    const example = parts[4]||'';
+    if(!word||!def){ skipped++; return; }
+    const pos = POS_LIST.find(p=>posRaw.includes(p))||'noun';
+    DB.vocab.push({id:uid(), word, pos, def, jp, example, tag: tag||''});
+    added++;
+  });
+  if(added){
+    saveDB(DB);
+    populateAdminVocabList();
+    renderVocabWithTags();
+    document.getElementById('bulk-vocab-input').value='';
+    result.textContent = added+' word'+(added>1?'s':'')+' added!'+(skipped?' ('+skipped+' skipped)':'');
+    showToast(added+' words added!');
+  } else {
+    result.textContent = 'No valid words found. Check format.';
+  }
+}
+
+/* ----------------------------------------------------------------
+   ADD VOCAB WORD TO MY CARDS
+   ---------------------------------------------------------------- */
+let _atmcVocab = null;
+
+function openAddToMyCards(vocabObj){
+  _atmcVocab = vocabObj;
+  const overlay = document.getElementById('add-to-mycards-overlay');
+  document.getElementById('atmc-word-preview').textContent = vocabObj.word + (vocabObj.jp?' — '+vocabObj.jp:'') + ': ' + vocabObj.def;
+  // Populate pack list
+  const packList = document.getElementById('atmc-pack-list');
+  if(!MY.packs.length){
+    packList.innerHTML = '<div style="color:var(--text3);font-size:.85rem">No packs yet — create one first.</div>';
+  } else {
+    packList.innerHTML = MY.packs.map(p=>`
+      <button class="btn btn-secondary" style="text-align:left;justify-content:flex-start;padding:10px 14px" onclick="addVocabToMyPack('${p.id}')">
+        📦 ${esc(p.name)} <span style="color:var(--text3);font-size:.78rem;margin-left:6px">${p.cards.length} cards</span>
+      </button>`).join('');
+  }
+  overlay.style.display='flex';
+}
+
+function closeAddToMyCards(){
+  document.getElementById('add-to-mycards-overlay').style.display='none';
+  _atmcVocab=null;
+}
+
+function addVocabToMyPack(packId){
+  if(!_atmcVocab) return;
+  const pack = MY.packs.find(p=>p.id===packId);
+  if(!pack) return;
+  // Build card: front=word, back=definition (+JP if available)
+  const back = _atmcVocab.def + (_atmcVocab.jp ? '\n' + _atmcVocab.jp : '') + (_atmcVocab.example ? '\n"' + _atmcVocab.example + '"' : '');
+  pack.cards.push({ id:uid(), front:_atmcVocab.word+(_atmcVocab.pos?' ('+_atmcVocab.pos+')':''), back });
+  saveMy(MY);
+  renderMyPacks();
+  closeAddToMyCards();
+  showToast('Added to "' + pack.name + '"!');
+}
+
+function openMyPackModalFromVocab(){
+  // Save the vocab we were trying to add, open create pack modal, then come back
+  closeAddToMyCards();
+  // Re-open add modal after pack is created via a flag
+  document.getElementById('my-pack-name').value='';
+  document.getElementById('my-pack-modal').classList.add('open');
+}
+
 function addVocab(){
   const word=document.getElementById('v-word').value.trim();
   const def =document.getElementById('v-def').value.trim();
