@@ -926,11 +926,12 @@ body{top:0!important}
     <!-- CONTENT BACKUP + SHARING -->
     <div class="admin-add-form" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(var(--accent-rgb),.06),transparent)">
       <div class="admin-add-title">💾 Content Backup &amp; Sharing</div>
-      <div class="admin-export-note">Export saves all class content as JSON. Use <strong>Share QR</strong> to let students load your content instantly by scanning a code — no file needed.</div>
+      <div class="admin-export-note">Export saves all class content as JSON. Use <strong>Share QR</strong> to share with students instantly. Use <strong>Download App + Content</strong> to get a ready-to-upload <code>index.html</code> with your content pre-baked in — just upload it to GitHub and it's live for everyone.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-primary btn-sm" onclick="showQrModal()">📲 Share QR</button>
         <button class="btn btn-secondary btn-sm" onclick="adminExport()">⬇ Export JSON</button>
         <button class="btn btn-secondary btn-sm" onclick="document.getElementById('admin-import-file').click()">⬆ Import JSON</button>
+        <button class="btn btn-primary btn-sm" onclick="exportBakedApp()" title="Download a ready-to-upload index.html with your content pre-loaded">🚀 Download App + Content</button>
         <input type="file" id="admin-import-file" accept=".json" style="display:none" onchange="adminImport(this)">
       </div>
     </div>
@@ -1135,6 +1136,8 @@ let adminLoggedIn = false;
 /* ----------------------------------------------------------------
    INIT — check URL for shared content first
    ---------------------------------------------------------------- */
+// BAKED_DB_INJECTION_POINT
+// END_BAKED_DB
 document.addEventListener('DOMContentLoaded',()=>{
   checkUrlContent();
   resetDailyIfNeeded();
@@ -1870,8 +1873,16 @@ function flipCoin(){
    Pure JS QR encoder (no library needed — uses URL fragment)
    ---------------------------------------------------------------- */
 function getShareUrl(){
-  // Compress DB to JSON, base64 encode, put in URL hash
-  const json=JSON.stringify(DB);
+  // Only include non-empty fields to keep URL short
+  const slim={};
+  if(DB.packs&&DB.packs.length)        slim.packs=DB.packs;
+  if(DB.vocab&&DB.vocab.length)        slim.vocab=DB.vocab;
+  if(DB.grammar&&DB.grammar.length)    slim.grammar=DB.grammar;
+  if(DB.cases&&DB.cases.length)        slim.cases=DB.cases;
+  if(DB.templates&&DB.templates.length)slim.templates=DB.templates;
+  if(DB.homework&&DB.homework.length)  slim.homework=DB.homework;
+  if(DB.announcements&&DB.announcements.length) slim.announcements=DB.announcements;
+  const json=JSON.stringify(slim);
   const b64=btoa(unescape(encodeURIComponent(json)));
   const base=window.location.href.split('#')[0].split('?')[0];
   return base+'?dl=1#'+b64;
@@ -1899,14 +1910,23 @@ function checkUrlContent(){
 function showQrModal(){
   const url=getShareUrl();
   document.getElementById('qr-url-box').textContent=url;
-
-  if(url.length>2953){
-    document.getElementById('qr-sub-text').textContent='⚠ Content is large — QR may be complex. Share the link directly instead.';
+  const MAX_QR=1200; // chars reliably encodable in a scannable QR
+  if(url.length>MAX_QR){
+    document.getElementById('qr-sub-text').textContent='Content is too large for a clean QR code. Copy the link below and send it to students directly — tapping the link does exactly the same thing.';
+    // Draw a "use link" placeholder on the canvas
+    const canvas=document.getElementById('qr-canvas');
+    canvas.width=200; canvas.height=100;
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#1a1a24'; ctx.fillRect(0,0,200,100);
+    ctx.fillStyle='#E8FF47'; ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Use the link below',100,38);
+    ctx.fillStyle='#aaa'; ctx.font='11px sans-serif';
+    ctx.fillText('Copy → paste into LINE/email',100,62);
+    ctx.fillText('Students tap it to load content',100,80);
   } else {
     document.getElementById('qr-sub-text').textContent='Students scan this QR code or open the link to load your content.';
+    drawQr(url);
   }
-
-  drawQr(url);
   document.getElementById('qr-modal').classList.add('open');
 }
 function closeQrModal(e){
@@ -2174,6 +2194,29 @@ function switchAdminTab(tab){
    ---------------------------------------------------------------- */
 function adminExport(){
   downloadJSON(DB,'debatelab-content-'+todayStr()+'.json');showToast('Content exported!');
+}
+
+function exportBakedApp(){
+  const src = document.documentElement.outerHTML;
+  const dbJson = JSON.stringify(DB);
+  const startMarker = '// BAKED_DB_INJECTION_POINT';
+  const endMarker = '// END_BAKED_DB';
+  const injection = startMarker + '\nDB=Object.assign(defaultDB(),' + dbJson + ');saveDB(DB);\n' + endMarker;
+  let baked;
+  if(src.includes(startMarker)){
+    const start = src.indexOf(startMarker);
+    const end = src.indexOf(endMarker) + endMarker.length;
+    baked = src.slice(0,start) + injection + src.slice(end);
+  } else {
+    baked = src;
+  }
+  const blob = new Blob(['<!DOCTYPE html>\n'+baked], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'index.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('App downloaded! Upload to GitHub 🚀');
 }
 function adminImport(input){
   const file=input.files[0];if(!file)return;
