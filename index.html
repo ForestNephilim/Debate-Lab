@@ -1397,9 +1397,13 @@ function renderCard(){
   const total=session.cards.length;
   document.getElementById('fc-progress-text').textContent=`${session.index+1} / ${total}`;
   document.getElementById('fc-progress-bar').style.width=((session.index/total)*100)+'%';
-  document.getElementById('fc-word').textContent=card.word||'—';
+  // Teacher cards use {word, def}, My Cards use {front, back}
+  const isMyCard = !card.word && card.front;
+  document.querySelector('.fc-front .fc-face-label').textContent = isMyCard ? 'Front' : 'Word';
+  document.querySelector('.fc-back .fc-face-label').textContent  = isMyCard ? 'Back'  : 'Definition';
+  document.getElementById('fc-word').textContent=card.word||card.front||'—';
   document.getElementById('fc-phonetic').textContent=card.phonetic||'';
-  document.getElementById('fc-definition').textContent=card.def||'—';
+  document.getElementById('fc-definition').textContent=card.def||card.back||'—';
   const exEl=document.getElementById('fc-example');
   exEl.textContent=card.example?`"${card.example}"`:'';
   exEl.style.display=card.example?'':'none';
