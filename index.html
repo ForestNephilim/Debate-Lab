@@ -551,7 +551,6 @@ body{top:0!important}
   <div class="nav-items">
     <button class="nav-item active" data-page="home"       onclick="goPage('home')">       <span class="nav-item-icon">🏠</span> Home</button>
     <button class="nav-item"        data-page="flashcards" onclick="goPage('flashcards')"> <span class="nav-item-icon">⚡</span> Flashcards</button>
-    <button class="nav-item"        data-page="mycards"    onclick="goPage('mycards')">    <span class="nav-item-icon">✨</span> My Cards</button>
     <button class="nav-item"        data-page="vocabulary" onclick="goPage('vocabulary')"> <span class="nav-item-icon">📖</span> Vocabulary</button>
     <button class="nav-item"        data-page="grammar"    onclick="goPage('grammar')">    <span class="nav-item-icon">✏️</span> Grammar</button>
     <button class="nav-item"        data-page="cases"      onclick="goPage('cases')">      <span class="nav-item-icon">⚖️</span> Case Studies</button>
@@ -588,7 +587,7 @@ body{top:0!important}
   </div>
   <div class="section-label">Quick Access</div>
   <div class="quick-grid">
-    <div class="quick-card" onclick="goPage('flashcards')"><div class="quick-card-icon">⚡</div><div><div class="quick-card-name">Flashcards</div><div class="quick-card-desc">Study teacher packs</div></div></div>
+    <div class="quick-card" onclick="goPage('flashcards')"><div class="quick-card-icon">⚡</div><div><div class="quick-card-name">Flashcards</div><div class="quick-card-desc">Teacher &amp; My Cards</div></div></div>
     <div class="quick-card" onclick="goPage('tools')">     <div class="quick-card-icon">🛠</div><div><div class="quick-card-name">Tools</div>      <div class="quick-card-desc">Timer, buzzers, coin</div></div></div>
     <div class="quick-card" onclick="goPage('cases')">     <div class="quick-card-icon">⚖️</div><div><div class="quick-card-name">Case Studies</div><div class="quick-card-desc">Argument structures</div></div></div>
     <div class="quick-card" onclick="goPage('homework')">  <div class="quick-card-icon">📋</div><div><div class="quick-card-name">Homework</div><div class="quick-card-desc">Current tasks</div></div></div>
@@ -600,18 +599,10 @@ body{top:0!important}
 <!-- ── FLASHCARDS ────────────────────────────────── -->
 <section class="page" id="page-flashcards">
   <div class="page-title">Flash<span>cards</span></div>
-  <p class="page-subtitle">Teacher packs. Choose a study mode after selecting a pack.</p>
+  <div class="section-label" style="margin-bottom:12px">Teacher Packs</div>
   <div id="pack-list"></div>
-</section>
-
-<!-- ── MY CARDS ──────────────────────────────────── -->
-<section class="page" id="page-mycards">
-  <div class="page-title">My<span> Cards</span></div>
-  <div class="my-cards-intro">
-    <div class="my-cards-intro-title">✨ Your Personal Study Space</div>
-    <div class="my-cards-intro-text">Create your own flashcard packs — just for you. Saved privately on this device.</div>
-  </div>
-  <button class="btn btn-primary btn-full" onclick="openNewMyPackModal()" style="margin-bottom:20px">+ Create New Pack</button>
+  <div class="section-label" style="margin:24px 0 8px">My Cards <span style="font-size:.75rem;color:var(--text3);font-family:var(--font-b);font-weight:400;text-transform:none;letter-spacing:0">— saved on this device only</span></div>
+  <button class="btn btn-primary btn-sm" onclick="openNewMyPackModal()" style="margin-bottom:16px">+ New Pack</button>
   <div id="my-pack-list"></div>
 </section>
 
@@ -1468,7 +1459,7 @@ function endSession(){
 }
 function closeSession(){
   document.getElementById('session-complete').classList.remove('active');
-  goPage(session.source==='teacher'?'flashcards':'mycards');
+  goPage('flashcards');
 }
 function restartSession(){
   document.getElementById('session-complete').classList.remove('active');
