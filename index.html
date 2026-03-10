@@ -569,8 +569,11 @@ body{top:0!important}
 <section class="page active" id="page-home">
   <div class="hero-banner">
     <div class="hero-greeting" id="home-greeting">Good morning, debater</div>
-    <div class="hero-title">Ready to<br>Argue Better?</div>
-    <div class="hero-meta" id="home-date"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="hero-title" style="margin-bottom:0">Ready to<br>Argue Better?</div>
+      <div id="home-clock" style="font-family:var(--font-d);font-weight:700;letter-spacing:.04em;color:var(--text2);text-align:right;line-height:1"></div>
+    </div>
+    <div class="hero-meta" id="home-date" style="margin-top:8px"></div>
   </div>
   <div class="stats-row">
     <div class="stat-box"><div class="stat-val" id="home-streak">0</div><div class="stat-label">🔥 Streak</div></div>
@@ -1286,6 +1289,17 @@ function renderHome(){
   const h=new Date().getHours();
   document.getElementById('home-greeting').textContent=h<12?'Good morning, debater':h<17?'Good afternoon, debater':'Good evening, debater';
   document.getElementById('home-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  // Live clock
+  function updateClock(){
+    const now=new Date();
+    const h=now.getHours().toString().padStart(2,'0');
+    const m=now.getMinutes().toString().padStart(2,'0');
+    const s=now.getSeconds().toString().padStart(2,'0');
+    const el=document.getElementById('home-clock');
+    if(el) el.innerHTML=`<span style="font-size:clamp(3rem,11vw,5rem);font-weight:900;line-height:1">${h}:${m}</span><span style="font-size:clamp(.85rem,2.5vw,1.1rem);font-weight:700;vertical-align:top;margin-top:6px;display:inline-block;opacity:.6">:${s}</span>`;
+  }
+  updateClock();
+  if(!window._clockInterval) window._clockInterval=setInterval(updateClock,1000);
   updateStreakDisplay();
   updateGoalDisplay();
   renderAnnouncements();
