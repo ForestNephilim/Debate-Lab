@@ -2255,27 +2255,35 @@ function adminExport(){
   downloadJSON(DB,'debatelab-content-'+todayStr()+'.json');showToast('Content exported!');
 }
 
-function exportBakedApp(){
-  const src = document.documentElement.outerHTML;
+async function exportBakedApp(){
+  showToast('Preparing download…');
+  let src;
+  try {
+    // Fetch the actual source file so markers are intact
+    const resp = await fetch(location.href);
+    src = await resp.text();
+  } catch(e) {
+    showToast('Could not fetch source. Try again.');
+    return;
+  }
   const dbJson = JSON.stringify(DB);
   const startMarker = '// BAKED_DB_INJECTION_POINT';
   const endMarker = '// END_BAKED_DB';
   const injection = startMarker + '\nDB=Object.assign(defaultDB(),' + dbJson + ');saveDB(DB);\n' + endMarker;
-  let baked;
-  if(src.includes(startMarker)){
-    const start = src.indexOf(startMarker);
-    const end = src.indexOf(endMarker) + endMarker.length;
-    baked = src.slice(0,start) + injection + src.slice(end);
-  } else {
-    baked = src;
+  if(!src.includes(startMarker)){
+    showToast('Error: markers not found in source.');
+    return;
   }
-  const blob = new Blob(['<!DOCTYPE html>\n'+baked], {type:'text/html'});
+  const start = src.indexOf(startMarker);
+  const end = src.indexOf(endMarker) + endMarker.length;
+  const baked = src.slice(0,start) + injection + src.slice(end);
+  const blob = new Blob([baked], {type:'text/html'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'index.html';
   a.click();
   URL.revokeObjectURL(a.href);
-  showToast('App downloaded! Upload to GitHub 🚀');
+  showToast('Downloaded! Upload to GitHub 🚀');
 }
 function adminImport(input){
   const file=input.files[0];if(!file)return;
