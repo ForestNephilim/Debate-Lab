@@ -754,8 +754,19 @@ body{top:0!important}
   </div>
   <div class="section-label">About</div>
   <div class="settings-group">
-    <div class="settings-row"><div class="settings-label">Version</div><span style="color:var(--text3);font-family:var(--font-d);font-size:.85rem">3.0.0</span></div>
-    <div class="settings-row"><div class="settings-label">Storage</div><span id="storage-used" style="color:var(--text3);font-family:var(--font-d);font-size:.85rem">—</span></div>
+    <div class="settings-row">
+      <div><div class="settings-label">Version</div><div class="settings-label-jp jp">バージョン</div></div>
+      <span id="app-version-display" style="color:var(--text3);font-family:var(--font-d);font-size:.85rem">3.1.0</span>
+    </div>
+    <div class="settings-row">
+      <div><div class="settings-label">Storage</div></div>
+      <span id="storage-used" style="color:var(--text3);font-family:var(--font-d);font-size:.85rem">—</span>
+    </div>
+    <div class="settings-row">
+      <div><div class="settings-label">Check for Updates</div><div class="settings-label-jp jp">アップデート確認</div></div>
+      <button class="btn btn-secondary btn-sm" onclick="checkForUpdates()">🔄 Check</button>
+    </div>
+    <div id="update-status" style="font-size:.8rem;padding:8px 4px;color:var(--text3);display:none"></div>
   </div>
 </section>
 
@@ -1173,6 +1184,7 @@ function saveUser(u){ localStorage.setItem(USER_KEY,JSON.stringify(u)) }
 function loadMy()  { try{return JSON.parse(localStorage.getItem(MY_KEY))||defaultMyData()}catch{return defaultMyData()} }
 function saveMy(m) { localStorage.setItem(MY_KEY,JSON.stringify(m)) }
 
+const APP_VERSION = '3.1.0';
 let DB   = loadDB();
 let USER = loadUser();
 let MY   = loadMy();
@@ -2256,6 +2268,29 @@ function switchAdminTab(tab){
    ---------------------------------------------------------------- */
 function adminExport(){
   downloadJSON(DB,'debatelab-content-'+todayStr()+'.json');showToast('Content exported!');
+}
+
+async function checkForUpdates(){
+  const statusEl = document.getElementById('update-status');
+  statusEl.style.display='block';
+  statusEl.textContent='Checking…';
+  try {
+    const resp = await fetch(location.href + '?cb=' + Date.now(), {cache:'no-store'});
+    const text = await resp.text();
+    const match = text.match(/const APP_VERSION = '([^']+)'/);
+    if(!match){ statusEl.textContent='Could not read version from server.'; return; }
+    const serverVersion = match[1];
+    if(serverVersion === APP_VERSION){
+      statusEl.style.color='var(--accent)';
+      statusEl.textContent='✓ You are on the latest version ('+APP_VERSION+').';
+    } else {
+      statusEl.style.color='#FF8C42';
+      statusEl.textContent='Update available! ('+APP_VERSION+' → '+serverVersion+') Reloading…';
+      setTimeout(()=>{ location.href = location.href.split('?')[0] + '?cb=' + Date.now(); }, 1500);
+    }
+  } catch(e) {
+    statusEl.textContent='Could not check — are you online?';
+  }
 }
 
 async function exportBakedApp(){
