@@ -1154,7 +1154,7 @@ body{top:0!important}
 /* ----------------------------------------------------------------
    STORAGE KEYS
    ---------------------------------------------------------------- */
-const DB_KEY   = 'debatelab_db_v2';
+const DB_KEY   = 'debatelab_db_v3';  // bumped to v3 — forces fresh load with preloaded grammar
 const USER_KEY = 'debatelab_user_v2';
 const MY_KEY   = 'debatelab_my_v2';
 
@@ -1283,7 +1283,12 @@ function loadDB()  {
     const def=defaultDB();
     const stored=JSON.parse(localStorage.getItem(DB_KEY))||{};
     const merged=Object.assign(def,stored);
-    if(!stored.grammar||stored.grammar.length===0) merged.grammar=def.grammar;
+    // Always restore default grammar if stored grammar is empty
+    if(!stored.grammar||stored.grammar.length===0){
+      merged.grammar=def.grammar;
+      // Write it back so it's there next time too
+      localStorage.setItem(DB_KEY,JSON.stringify(merged));
+    }
     return merged;
   }catch{return defaultDB()}
 }
