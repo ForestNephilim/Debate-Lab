@@ -2501,7 +2501,8 @@ async function exportBakedApp(){
   const dbJson = JSON.stringify(DB);
   const startMarker = '// BAKED_DB_INJECTION_POINT';
   const endMarker = '// END_BAKED_DB';
-  const injection = startMarker + '\nDB=Object.assign(defaultDB(),' + dbJson + ');saveDB(DB);\n' + endMarker;
+  // Merge baked DB with defaultDB so grammar/defaults are never lost
+  const injection = startMarker + '\n(function(){const _baked=' + dbJson + ';const _def=defaultDB();if(!_baked.grammar||_baked.grammar.length===0)_baked.grammar=_def.grammar;DB=Object.assign(_def,_baked);saveDB(DB);})();\n' + endMarker;
   if(!src.includes(startMarker)){
     showToast('Error: markers not found in source.');
     return;
