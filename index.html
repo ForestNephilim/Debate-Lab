@@ -350,6 +350,35 @@ body::before{
 .grammar-example-jp{font-family:var(--font-jp);font-size:.82rem;color:var(--text3);margin-top:4px}
 
 /* ================================================================
+   RESOURCES PAGE
+   ================================================================ */
+.res-filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.res-filter-chip{font-family:var(--font-d);font-weight:700;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border-radius:20px;border:1px solid var(--border);color:var(--text3);cursor:pointer;transition:all var(--tr);background:transparent}
+.res-filter-chip.active,.res-filter-chip:hover{background:rgba(var(--accent-rgb),.12);border-color:rgba(var(--accent-rgb),.4);color:var(--accent)}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.res-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 18px 14px;display:flex;flex-direction:column;gap:10px;transition:all var(--tr);text-decoration:none;cursor:pointer;position:relative;overflow:hidden}
+.res-card:hover{border-color:rgba(var(--accent-rgb),.35);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.res-card-top{display:flex;align-items:flex-start;gap:12px}
+.res-card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.res-icon-pdf{background:rgba(255,71,87,.15)}
+.res-icon-web{background:rgba(77,170,255,.15)}
+.res-icon-video{background:rgba(255,71,87,.15)}
+.res-icon-outline{background:rgba(77,255,180,.15)}
+.res-icon-game{background:rgba(232,255,71,.15)}
+.res-card-text{flex:1;min-width:0}
+.res-card-title{font-family:var(--font-d);font-weight:800;font-size:1rem;text-transform:uppercase;letter-spacing:.03em;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res-card-desc{font-size:.83rem;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.res-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.res-card-tag{font-family:var(--font-d);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px;border:1px solid var(--border);color:var(--text3)}
+.res-card-action{font-family:var(--font-d);font-weight:700;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:4px}
+.res-card[data-type="pdf"] .res-card-tag{color:#ff6b78;border-color:rgba(255,71,87,.3)}
+.res-card[data-type="web"] .res-card-tag{color:#4daaff;border-color:rgba(77,170,255,.3)}
+.res-card[data-type="video"] .res-card-tag{color:#ff6b78;border-color:rgba(255,71,87,.3)}
+.res-card[data-type="outline"] .res-card-tag{color:#4dffb4;border-color:rgba(77,255,180,.3)}
+.res-card[data-type="game"] .res-card-tag{color:var(--accent);border-color:rgba(var(--accent-rgb),.3)}
+.res-note{font-size:.82rem;color:var(--text3);font-style:italic;margin-bottom:8px}
+
+/* ================================================================
    CASE STUDIES
    ================================================================ */
 .case-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px}
@@ -576,6 +605,7 @@ body{top:0!important}
     <button class="nav-item"        data-page="cases"      onclick="goPage('cases')">      <span class="nav-item-icon">⚖️</span> Case Studies</button>
     <button class="nav-item"        data-page="templates"  onclick="goPage('templates')">  <span class="nav-item-icon">📝</span> Templates</button>
     <button class="nav-item"        data-page="homework"   onclick="goPage('homework')">   <span class="nav-item-icon">📋</span> Homework</button>
+    <button class="nav-item"        data-page="resources"  onclick="goPage('resources')">  <span class="nav-item-icon">📚</span> Resources</button>
     <button class="nav-item"        data-page="tools"      onclick="goPage('tools')">      <span class="nav-item-icon">🛠</span> Tools</button>
     <div class="nav-divider"></div>
     <button class="nav-item"        data-page="settings"   onclick="goPage('settings')">   <span class="nav-item-icon">⚙️</span> Settings</button>
@@ -648,6 +678,14 @@ body{top:0!important}
   <div class="page-title">Gram<span>mar</span></div>
   <p class="page-subtitle">Tap any topic to expand the explanation.</p>
   <div id="grammar-list"></div>
+</section>
+
+<!-- ── RESOURCES ────────────────────────────────── -->
+<section class="page" id="page-resources">
+  <div class="page-title">Re<span>sources</span></div>
+  <p class="page-subtitle">Documents, links, videos and games for class and home study.</p>
+  <div class="res-filter-bar" id="res-filter-bar"></div>
+  <div class="res-grid" id="res-grid"></div>
 </section>
 
 <!-- ── CASE STUDIES ──────────────────────────────── -->
@@ -969,6 +1007,7 @@ body{top:0!important}
       <button class="admin-tab" onclick="switchAdminTab('templates')">📝 Templates</button>
       <button class="admin-tab" onclick="switchAdminTab('homework')">📋 HW</button>
       <button class="admin-tab" onclick="switchAdminTab('announcements')">📢 News</button>
+      <button class="admin-tab" onclick="switchAdminTab('resources')">📚 Resources</button>
     </div>
 
     <!-- FLASHCARDS ADMIN -->
@@ -1095,6 +1134,34 @@ body{top:0!important}
         <button class="btn btn-primary btn-sm" onclick="addHomework()">Add Homework</button>
       </div>
       <div id="admin-homework-list"></div>
+    </div>
+
+    <!-- RESOURCES ADMIN -->
+    <div class="admin-section" id="admin-resources">
+      <div class="admin-add-form">
+        <div class="admin-add-title">➕ Add Resource</div>
+        <div class="form-row-2 form-row">
+          <div><label class="form-label">Title</label><input type="text" id="res-title" placeholder="English Debate Handbook"></div>
+          <div><label class="form-label">Type</label>
+            <select id="res-type" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;color:var(--text);font-size:.9rem">
+              <option value="pdf">📄 PDF / Document</option>
+              <option value="outline">🖨️ Outline (printable)</option>
+              <option value="web">🌐 Website / Article</option>
+              <option value="video">▶️ Video</option>
+              <option value="game">🎮 Game</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row"><label class="form-label">URL / Link</label><input type="url" id="res-url" placeholder="https://github.com/yourusername/yourrepo/raw/main/files/handbook.pdf"></div>
+        <div class="form-row"><label class="form-label">Description</label><textarea id="res-desc" placeholder="A short description of what this resource is…" style="height:70px"></textarea></div>
+        <div class="form-row-2 form-row">
+          <div><label class="form-label">Category tag (optional)</label><input type="text" id="res-tag" placeholder="e.g. Grammar, Debate Skills, Fun"></div>
+          <div><label class="form-label">Japanese description (optional)</label><input type="text" id="res-desc-jp" class="jp" placeholder="日本語の説明"></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="addResource()">Add Resource</button>
+      </div>
+      <p class="res-note" style="margin-top:8px">💡 For GitHub-hosted files, use the raw URL: github.com/user/repo/raw/main/files/name.pdf</p>
+      <div id="admin-resources-list"></div>
     </div>
 
     <!-- ANNOUNCEMENTS ADMIN -->
@@ -1260,6 +1327,7 @@ function defaultDB(){
        exEn2:"Never before have we faced such an urgent need to act on climate change — and yet the opposition is proposing that we slow down reform."}
     ],
     cases:[],
+    resources:[],
     templates:[],
     homework:[],
     announcements:[]
@@ -1318,6 +1386,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderMyPacks();
   renderVocabWithTags();
   renderGrammar();
+  renderResources();
   renderCases();
   renderTemplates();
   renderHomework();
@@ -1368,6 +1437,7 @@ function goPage(page){
   window.scrollTo(0,0);
   if(page==='vocabulary'){ vocabTagFilter=''; renderVocabWithTags(); }
   if(page==='grammar')    renderGrammar();
+  if(page==='resources')  renderResources();
   if(page==='homework')   renderHomework();
   if(page==='templates')  renderTemplates();
   if(page==='cases')      renderCases();
@@ -3075,7 +3145,7 @@ function deleteAnn(id){ DB.announcements=DB.announcements.filter(a=>a.id!==id); 
 function populateAdminLists(){
   populateAdminPacksList();populateAdminVocabList();populateAdminGrammarList();
   populateAdminCasesList();populateAdminTemplatesList();
-  populateAdminHomeworkList();populateAdminAnnList();
+  populateAdminHomeworkList();populateAdminAnnList();renderAdminResources();
 }
 
 /* ----------------------------------------------------------------
@@ -3085,6 +3155,104 @@ function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(
 function todayStr(){ return new Date().toISOString().slice(0,10) }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a }
 function esc(s){ if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') }
+/* ================================================================
+   RESOURCES
+   ================================================================ */
+const RES_ICONS = {pdf:'📄', outline:'🖨️', web:'🌐', video:'▶️', game:'🎮'};
+const RES_LABELS = {pdf:'PDF', outline:'Printable', web:'Website', video:'Video', game:'Game'};
+const RES_ACTIONS = {pdf:'Open PDF', outline:'Print', web:'Visit', video:'Watch', game:'Play'};
+
+let resFilter = '';
+
+function renderResources(){
+  const grid = document.getElementById('res-grid');
+  const filterBar = document.getElementById('res-filter-bar');
+  const resources = DB.resources || [];
+  const showJp = USER.lang === 'jp';
+
+  // Build filter chips from types present
+  const types = [...new Set(resources.map(r => r.type))];
+  filterBar.innerHTML = resources.length > 1
+    ? `<button class="res-filter-chip${!resFilter?' active':''}" onclick="setResFilter('')">All</button>`
+      + types.map(t => `<button class="res-filter-chip${resFilter===t?' active':''}" onclick="setResFilter('${t}')">${RES_ICONS[t]||'📎'} ${RES_LABELS[t]||t}</button>`).join('')
+    : '';
+
+  const filtered = resFilter ? resources.filter(r => r.type === resFilter) : resources;
+
+  if(!filtered.length){
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">📚</div><div class="empty-text">No resources yet — ask your teacher!</div></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(r => `
+    <a class="res-card" data-type="${esc(r.type)}" href="${esc(r.url)}" target="_blank" rel="noopener">
+      <div class="res-card-top">
+        <div class="res-card-icon res-icon-${esc(r.type)}">${RES_ICONS[r.type]||'📎'}</div>
+        <div class="res-card-text">
+          <div class="res-card-title">${esc(r.title)}</div>
+          <div class="res-card-desc">${esc(showJp && r.descJp ? r.descJp : r.desc)}</div>
+        </div>
+      </div>
+      <div class="res-card-footer">
+        <span class="res-card-tag">${r.tag ? esc(r.tag) : RES_LABELS[r.type]||r.type}</span>
+        <span class="res-card-action">${RES_ACTIONS[r.type]||'Open'} →</span>
+      </div>
+    </a>`).join('');
+}
+
+function setResFilter(type){
+  resFilter = type;
+  renderResources();
+  document.querySelectorAll('.res-filter-chip').forEach(c => c.classList.toggle('active', c.textContent.includes(RES_LABELS[type]||'All') && (type===''?true:c.textContent.includes(RES_LABELS[type]))));
+  // simpler toggle
+  document.querySelectorAll('.res-filter-chip').forEach(c => {
+    if(type === '') c.classList.toggle('active', c.textContent.trim().startsWith('All'));
+    else c.classList.toggle('active', c.onclick && c.onclick.toString().includes(`'${type}'`));
+  });
+}
+
+function addResource(){
+  const title = document.getElementById('res-title').value.trim();
+  const url   = document.getElementById('res-url').value.trim();
+  const type  = document.getElementById('res-type').value;
+  const desc  = document.getElementById('res-desc').value.trim();
+  if(!title || !url){ showToast('Title and URL are required.'); return; }
+  if(!(DB.resources)) DB.resources = [];
+  DB.resources.push({
+    id: uid(), title, url, type, desc,
+    tag:    document.getElementById('res-tag').value.trim(),
+    descJp: document.getElementById('res-desc-jp').value.trim()
+  });
+  saveDB(DB);
+  ['res-title','res-url','res-desc','res-tag','res-desc-jp'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('res-type').value = 'pdf';
+  renderAdminResources();
+  showToast('Resource added!');
+}
+
+function deleteResource(id){
+  DB.resources = (DB.resources||[]).filter(r => r.id !== id);
+  saveDB(DB);
+  renderAdminResources();
+  showToast('Deleted.');
+}
+
+function renderAdminResources(){
+  const el = document.getElementById('admin-resources-list');
+  if(!el) return;
+  const resources = DB.resources || [];
+  if(!resources.length){ el.innerHTML = '<div class="empty-state" style="padding:20px 0"><div class="empty-icon">📚</div><div class="empty-text">No resources yet</div></div>'; return; }
+  el.innerHTML = resources.map(r => `
+    <div class="admin-item-card">
+      <div style="font-size:1.4rem;flex-shrink:0">${RES_ICONS[r.type]||'📎'}</div>
+      <div class="admin-item-info">
+        <div class="admin-item-title">${esc(r.title)}</div>
+        <div class="admin-item-meta">${RES_LABELS[r.type]||r.type}${r.tag?' · '+esc(r.tag):''} · <span style="color:var(--text3);font-size:.78rem">${esc(r.url.length>50?r.url.slice(0,50)+'…':r.url)}</span></div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="deleteResource('${r.id}')">✕</button>
+    </div>`).join('');
+}
+
 function downloadJSON(data,filename){ const a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));a.download=filename;a.click() }
 let _toastTimer;
 function showToast(msg){ const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>el.classList.remove('show'),2800) }
