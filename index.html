@@ -16,7 +16,7 @@
 <title>DebateLab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 <style>
 /* ================================================================
    VARIABLES
@@ -573,9 +573,11 @@ textarea{min-height:80px;resize:vertical}
 @media(min-width:480px){.quick-grid{grid-template-columns:1fr 1fr}}
 @media(min-width:680px){.page{padding:32px 24px 100px}}
 
-/* ── Google Translate widget — let Google style it ── */
-.goog-te-banner-frame{display:none!important}
+/* ── Google Translate ── */
+.goog-te-banner-frame,.goog-te-balloon-frame{display:none!important}
 body{top:0!important}
+.goog-te-gadget{font-size:0!important;color:transparent!important}
+.goog-te-gadget .goog-te-combo{font-family:var(--font-d);font-weight:700;font-size:.82rem;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 8px;cursor:pointer;max-width:120px}
 </style>
 </head>
 <body data-theme="dark" data-accent="yellow">
@@ -584,7 +586,7 @@ body{top:0!important}
 <header id="topbar">
   <div class="topbar-logo" onclick="goPage('home')" style="cursor:pointer">Debate<span>Lab</span></div>
   <div class="topbar-right">
-    <div id="google_translate_element"></div>
+    <div id="google_translate_element" style="min-width:0"></div>
     <button class="hamburger-btn" id="hamburger-btn" onclick="toggleNav()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -1244,84 +1246,127 @@ function defaultDB(){
     grammar:[
       {id:"g001",title:"Conditional Sentences — Overview",
        exp:"Conditional sentences use 'if' to describe situations and their results. There are four main types:\n\nZERO conditional — always-true facts:\n  If + present simple → present simple\n  \"If you heat water to 100°C, it boils.\"\n\nFIRST conditional — realistic future situations:\n  If + present simple → will + base verb\n  \"If the government acts now, the situation will improve.\"\n\nSECOND conditional — unlikely or imaginary present situations:\n  If + past simple → would + base verb\n  \"If we invested more in education, inequality would decrease.\"\n  ⚠️ Use WERE (not was) with I/he/she: \"If I were the government…\"\n\nTHIRD conditional — hypothetical past situations / regrets:\n  If + past perfect → would have + past participle\n  \"If they had acted sooner, the crisis would have been avoided.\"\n\nMIXED conditional — unreal past cause, present result:\n  If + past perfect → would + base verb\n  \"If this policy had been introduced earlier, things would be different now.\"",
-       expJp:"条件文は「if」を使って状況とその結果を表します。\n\n• ゼロ条件：常に真の事実。現在形→現在形。\n• 第一条件（未来の現実）：実現可能な未来。現在形→will+動詞原形。\n• 第二条件（非現実の現在）：ありそうもない仮定。過去形→would+動詞原形。⚠️ I/he/sheでも「were」を使う！\n• 第三条件（非現実の過去）：過去の後悔。過去完了→would have+過去分詞。\n• 混合条件：過去の仮定＋現在の結果。",
+       expJp:"条件文には4種類ある。
+ゼロ条件（現在形→現在形）：常に成り立つ事実。
+第一条件（現在形→will）：実現可能な未来の話。
+第二条件（過去形→would）：現実にはない仮定の話。⚠️I/he/sheでも「were」を使う。
+第三条件（過去完了→would have）：過去への後悔や仮定。
+混合条件：過去の仮定＋現在の結果。",
        exEn:"If the government bans social media, young people will find other ways to communicate.",
        exJp:"もし政府がSNSを禁止すれば、若者たちは他のコミュニケーション手段を見つけるでしょう。",
        exEn2:"If this policy had been introduced ten years ago, the situation would be very different today."},
 
       {id:"g002",title:"Conditional Sentences — Unless & Formal Inversion",
        exp:"UNLESS = \"if… not\" — the result depends on something NOT happening:\n  \"Unless we act now, the problem will get worse.\"\n  (= If we do not act now, the problem will get worse.)\n  ⚠️ Do not use a negative verb after 'unless':\n  ✅ \"Unless we invest more…\"\n  ❌ \"Unless we don't invest more…\"\n\nFORMAL INVERSION (third conditional without 'if'):\n  Drop 'if' and move 'had' before the subject:\n  Standard: \"If we had prepared better, we would have won.\"\n  Formal:   \"Had we prepared better, we would have won.\"\n  \"Had the government consulted experts, this could have been avoided.\"\n  This style is common in written arguments and formal debate cases.\n\nMODAL VARIATION — use could/might instead of would for uncertainty:\n  \"If this policy is implemented, it could reduce inequality.\"\n  \"Had they invested earlier, they might have avoided the crisis.\"",
-       expJp:"「unless」は「もし〜でなければ」を意味します（= if ... not）。\nフォーマルな第三条件文では「if」を省略して「had」を主語の前に置きます（倒置）。\n「could/might」を使うと不確実性を表現できます。",
+       expJp:"「unless」は「if ... not」と同じ意味。否定の動詞と一緒に使わないこと。
+フォーマルな第三条件文では「if」を省き、「Had we...」のように倒置する。
+「could/might」を使うと「〜かもしれない」という不確かさを表せる。",
        exEn:"Unless stronger regulations are introduced, environmental damage will continue to accelerate.",
        exJp:"より強い規制が導入されない限り、環境破壊は加速し続けるでしょう。",
        exEn2:"Had the government consulted independent experts earlier, this crisis might have been prevented entirely."},
 
       {id:"g003",title:"Wishes and Regrets",
        exp:"WISH expresses desires or regrets that are not currently true.\n\nWish + past simple → regret about the PRESENT:\n  \"I wish the policy were different.\" (But it isn't.)\n  ⚠️ Use WERE, not was: \"I wish it were easier.\"\n\nWish + past perfect → regret about the PAST (too late to change):\n  \"I wish the government had acted sooner.\"\n  \"I wish we had seen the evidence before the debate.\"\n\nWish + would → desire for change in someone ELSE's behaviour:\n  \"I wish the opposition would engage with the actual evidence.\"\n\nIF ONLY — stronger, more emotional version of wish:\n  \"If only we had more time to address this properly.\"\n  \"If only the data had been available sooner.\"\n\nSHOULD HAVE / OUGHT TO HAVE = past regret about an action not taken:\n  \"The government should have invested in healthcare years ago.\"\n  \"They ought to have consulted communities before making this decision.\"",
-       expJp:"wishは現実ではない願望や後悔を表します。\n• wish + 過去形：現在の後悔（⚠️ wereを使う）\n• wish + 過去完了：過去の後悔\n• wish + would：他者への願望・不満\n• if only：より強い感情的な表現\n• should have / ought to have + 過去分詞：過去の行動への後悔",
+       expJp:"wishは現実と異なる願望・後悔を表す。
+・wish＋過去形：今の現実への後悔（「were」を使う）
+・wish＋過去完了：過去への後悔
+・wish＋would：他の人に変わってほしい気持ち
+・if only：wishより感情的に強い表現
+・should have / ought to have：「〜すべきだった」という後悔",
        exEn:"I wish the opposition had provided concrete evidence rather than relying solely on opinion.",
        exJp:"反対側が意見だけに頼るのではなく、具体的な証拠を提示してくれていればよかったのにと思います。",
        exEn2:"The government should have introduced these measures years ago — if only they had listened to the scientific community."},
 
       {id:"g004",title:"The Passive Voice",
        exp:"The passive shifts focus from WHO does the action to WHAT happens.\nFormed with: be (in any tense) + past participle\n\nPresent:  \"This policy is supported by many economists.\"\nPast:     \"The law was introduced in 2010.\"\nFuture:   \"New regulations will be implemented next year.\"\nPresent perfect: \"Evidence has been presented to the committee.\"\nModal:    \"Resources should be distributed more fairly.\"\n\nWHEN TO USE THE PASSIVE IN DEBATE:\n\n1. The agent is unknown or unimportant:\n   \"Billions of dollars are spent on defence each year.\"\n\n2. Focus on the result, not the actor:\n   \"Children are affected most by poverty.\"\n   \"Communities have been left behind by this policy.\"\n\n3. Formal / academic register:\n   \"It has been argued that…\"\n   \"It has been widely reported that…\"\n   \"It cannot be denied that…\"\n\n4. To avoid blame or soften a claim:\n   \"Mistakes were made in the planning process.\"\n\nBy-phrase: include the agent only when it adds important information:\n   \"The report was written by independent researchers.\"",
-       expJp:"受動態はbe動詞＋過去分詞で作ります。主語が行動を受ける形です。\nディベートでは：行為者が不明・不重要な場合、結果に焦点を当てたい場合、フォーマルに聞こえたい場合（It has been argued that...）に使います。",
+       expJp:"受動態は「be動詞＋過去分詞」で作る。誰がやったかより、何が起きたかに注目したいときに使う。
+ディベートでは「It has been argued that...」「It cannot be denied that...」などフォーマルな表現によく使われる。行為者を示すby句は、重要な情報のときだけ使えばよい。",
        exEn:"It has been widely argued that economic growth cannot be sustained without strong environmental protections.",
        exJp:"環境保護を強化せずに経済成長を維持することはできないと広く主張されてきました。",
        exEn2:"These communities have been disproportionately affected by budget cuts — and yet their voices have been completely ignored."},
 
       {id:"g005",title:"Reported Speech",
        exp:"Reported speech describes what someone said earlier. The tense usually shifts back one step.\n\nDirect:   \"Climate change is a serious problem.\"\nReported: \"The scientist said (that) climate change was a serious problem.\"\n\nTENSE SHIFTS:\n  present simple     → past simple\n  present continuous → past continuous\n  past simple        → past perfect\n  will               → would\n  can                → could\n  have/has           → had\n  is going to        → was going to\n\nSAY vs. TELL:\n  'Say' has no object:  \"She said (that) the data was clear.\"\n  'Tell' needs object:  \"She told us (that) the data was clear.\"\n  ❌ \"She said us…\"  ❌ \"She told that…\"\n\nREPORTING VERBS (more precise than 'said'):\n  claimed, argued, stated, suggested, admitted, denied, insisted, warned, predicted, concluded\n  \"The report concluded that inequality had been rising for decades.\"\n  \"The opposition argued that the policy would be ineffective.\"\n\nNo tense shift needed when the fact is still true:\n  \"Scientists confirmed that CO₂ causes climate change.\" (still true — present OK)",
-       expJp:"間接話法は誰かが言ったことを伝えるときに使います。時制は通常一段階後退します。\n「say」は目的語不要。「tell」は目的語必要（tell us / tell them）。\n報告動詞：claimed, argued, stated, suggested, admitted など。事実がまだ真の場合は時制を変えなくてよい。",
+       expJp:"間接話法は誰かの発言を伝えるときに使う。時制は一段階過去にずらす（現在形→過去形、will→wouldなど）。
+「say」は目的語なし、「tell」は目的語あり（tell us）。
+「claimed / argued / stated」など具体的な報告動詞を使うとより正確に伝わる。現在でも真実のことは時制をずらさなくてよい。",
        exEn:"The opposition claimed that the policy would create jobs, but the evidence presented clearly suggested otherwise.",
        exJp:"反対側はその政策が雇用を生み出すと主張しましたが、提示された証拠は明らかに別のことを示していました。",
        exEn2:"Several leading economists have argued that inequality has been rising for decades — this is precisely the issue our side is proposing to address."},
 
       {id:"g006",title:"Modal Verbs",
        exp:"Modal verbs express possibility, obligation, ability, and deduction. They never change form and are always followed by a base verb (no 'to').\n\nOBLIGATION & NECESSITY:\n  must       — strong obligation / certainty:\n               \"Governments must take responsibility.\"\n               \"This cannot be the right solution.\"\n  have to    — external obligation (rule/law):\n               \"Companies have to comply with regulations.\"\n  need to    — necessity:\n               \"We need to address the root cause.\"\n\nRECOMMENDATION & ADVICE:\n  should     — strong recommendation:\n               \"Resources should be distributed more equally.\"\n  ought to   — formal version of should:\n               \"Corporations ought to pay their fair share of tax.\"\n\nPOSSIBILITY & PREDICTION:\n  could      — general possibility:\n               \"This policy could reduce poverty significantly.\"\n  might/may  — less certain possibility:\n               \"This law might have unintended consequences.\"\n  will       — confident prediction:\n               \"Without action, temperatures will rise further.\"\n  would      — hypothetical result:\n               \"A carbon tax would incentivise cleaner energy.\"\n\nPAST MODALS (modal + have + past participle):\n  should have — past regret:    \"They should have acted sooner.\"\n  could have  — past ability:   \"We could have avoided this.\"\n  might have  — past possibility: \"It might have worked differently.\"",
-       expJp:"助動詞は可能性・義務・能力・推論を表します。形は主語に関係なく変化せず、後には動詞の原形が続きます。\nmust（強い義務）、should/ought to（推薦）、could/might/may（可能性）、will/would（予測・仮定）\n過去の助動詞：should have / could have / might have + 過去分詞",
+       expJp:"助動詞は形が変わらず、後ろに動詞の原形がくる。
+・must：強い義務・確信
+・should / ought to：推薦・道徳的な義務
+・could / might / may：可能性
+・will / would：予測・仮定
+過去の助動詞（should have / could have + 過去分詞）で過去への後悔や可能性を表せる。",
        exEn:"Wealthier nations must take greater responsibility for funding climate adaptation — this is not optional, it is a moral obligation.",
        exJp:"より豊かな国々は気候適応の資金調達に対してより大きな責任を負わなければなりません。これは任意ではなく、道徳的義務です。",
        exEn2:"A universal basic income could reduce inequality significantly, but it might also create unintended dependency on the state."},
 
       {id:"g007",title:"Suggestions and Advice",
        exp:"SHOULD — strong advice or recommendation:\n  \"The government should invest more in public health.\"\n  \"We should not ignore the evidence.\"\n\nOUGHT TO — formal version of should (rarely used in questions/negatives):\n  \"Corporations ought to be held accountable for their emissions.\"\n  \"All nations ought to contribute to climate funding.\"\n\nCOULD — gentle suggestion (possibility, not pressure):\n  \"The government could introduce a carbon tax.\"\n  \"Alternatively, they could invest directly in renewables.\"\n  Use 'could… or' to offer alternatives without forcing a position.\n\nIF I WERE + SUBJECT — second conditional advice:\n  \"If I were the government, I would prioritise education spending.\"\n  \"If I were in their position, I would consider the long-term costs.\"\n  ⚠️ Always use WERE, never was — even with I/he/she.\n\nHAD BETTER — urgent advice with implied negative consequence:\n  \"The opposition had better provide evidence, or their case collapses.\"\n  \"Policymakers had better consult communities before deciding.\"\n  ⚠️ 'Had better' is stronger and more urgent than 'should'.\n\nREALLY + modal — adds emphasis:\n  \"We really should address this before it is too late.\"\n  \"The government really ought to act now.\"",
-       expJp:"should（強い推薦）、ought to（フォーマルなshould）、could（穏やかな提案）、if I were...（仮定法のアドバイス、必ずwereを使う）、had better（強い緊急アドバイス）",
+       expJp:"・should：強い推薦
+・ought to：shouldのフォーマル版
+・could：穏やかな提案（複数の選択肢を示すときに便利）
+・if I were...：仮定法のアドバイス（必ずwereを使う）
+・had better：結果を暗示する強い忠告
+・really＋助動詞：強調表現",
        exEn:"The government should immediately redirect funding toward renewable energy rather than continuing to subsidise fossil fuels.",
        exJp:"政府は化石燃料への補助金を続けるのではなく、直ちに再生可能エネルギーへの資金を転換すべきです。",
        exEn2:"If I were the opposition, I would address the economic impact of this proposal directly rather than focusing only on abstract ideology."},
 
       {id:"g008",title:"Coordinating Conjunctions",
        exp:"Coordinating conjunctions link words, phrases, or independent clauses of equal importance: FOR, AND, NOR, BUT, OR, YET, SO (remember: FANBOYS)\n\nAND — adds information:\n  \"Poverty increases inequality and reduces social mobility.\"\n  ✅ Use comma before 'and' when joining two full clauses:\n  \"The economy grew, and unemployment fell.\"\n\nBUT — contrast (positive vs. negative):\n  \"The policy creates jobs, but it also harms the environment.\"\n\nYET — surprising contrast (more formal than 'but'):\n  \"The evidence is clear, yet the government refuses to act.\"\n\nOR — alternatives; also used for warnings:\n  \"We can invest now, or we will pay a far higher price later.\"\n\nSO — result or consequence:\n  \"The data is overwhelming, so we cannot ignore this issue.\"\n\nNOR — adds to a negative statement (formal):\n  Subject and verb invert after 'nor':\n  \"The policy is ineffective, nor does it address the root cause.\"\n\nFOR — reason (formal/literary):\n  \"Action is necessary, for the consequences of inaction are severe.\"\n\nCOMMA RULE: use a comma before the conjunction when joining two complete sentences. No comma for two words/phrases (\"speed and efficiency\").",
-       expJp:"等位接続詞（FANBOYS）：For, And, Nor, But, Or, Yet, So\nand（追加）、but（対比）、yet（驚きの対比・フォーマル）、or（選択・警告）、so（結果）、nor（否定の追加・倒置あり）、for（理由・フォーマル）\n2つの完全な文をつなぐときはカンマを使う。",
+       expJp:"等位接続詞（FANBOYS）は対等な語句・節をつなぐ。
+・and：追加　・but：対比　・yet：驚きの対比（フォーマル）
+・or：選択・警告　・so：結果　・nor：否定の追加（倒置あり）
+2つの完全な文をつなぐときはカンマを接続詞の前につける。",
        exEn:"Economic growth is important, but it must not come at the expense of environmental protection and social equality.",
        exJp:"経済成長は重要ですが、環境保護と社会的平等を犠牲にしてはなりません。",
        exEn2:"The opposition fails to address the root cause of the problem, nor do they offer any workable alternative solution."},
 
       {id:"g009",title:"Subordinating Conjunctions",
        exp:"Subordinating conjunctions connect a main clause to a dependent clause, showing relationships of purpose, reason, contrast, and time.\n\nPURPOSE — so that, in order to, in order that:\n  \"We propose this policy so that all citizens can access healthcare.\"\n  \"Regulations must be strengthened in order to prevent exploitation.\"\n  (In speech, 'in order' is often dropped: \"…to prevent exploitation.\")\n\nREASON — because, since, as:\n  \"This is critical because millions of people are directly affected.\"\n  \"Since the evidence is clear, we must take action.\"\n  ⚠️ 'As' can be ambiguous (time or reason) — prefer 'because' for clarity.\n\nCONTRAST / CONCESSION — although, even though, while, whereas:\n  \"Although the policy has some benefits, the risks clearly outweigh them.\"\n  \"Even though costs are high, the long-term benefits justify investment.\"\n  \"While some argue for stricter laws, others prioritise individual freedom.\"\n  \"Whereas developed nations have resources to adapt, poorer nations do not.\"\n\nTIME — when, as soon as, once, until, before, after:\n  \"When this policy is introduced, living conditions will improve.\"\n  \"Once the data is analysed, the conclusion will be clear.\"\n  ⚠️ Do NOT use future tense after time conjunctions:\n  ✅ \"When the law passes, things will change.\"\n  ❌ \"When the law will pass, things will change.\"",
-       expJp:"従属接続詞は主節と従属節をつなぎます。\n目的：so that / in order to\n理由：because / since（asは曖昧なのでbeaicuseが明確）\n対比・譲歩：although / even though / while / whereas\n時間：when / once / until など\n⚠️ 時間の接続詞の後には未来形を使わない！",
+       expJp:"従属接続詞は主節と従属節をつなぎ、関係性を示す。
+・目的：so that / in order to
+・理由：because / since（asは曖昧なのでbeaicuseが安全）
+・対比：although / even though / while / whereas
+・時間：when / once / until
+⚠️ 時間の接続詞の後には未来形を使わない（when the law passes ✓ / will pass ✗）",
        exEn:"Although the opposition raises some valid concerns, the long-term benefits of this policy clearly outweigh the short-term costs.",
        exJp:"反対側はいくつかの正当な懸念を提起していますが、この政策の長期的な利益は短期的なコストを明らかに上回ります。",
        exEn2:"This investment is necessary in order to ensure that future generations are not left to deal with the consequences of our inaction."},
 
       {id:"g010",title:"Comparative Adjectives",
        exp:"Comparative adjectives compare two things. Always use THAN (never 'then') after the comparative.\n\nFORMING COMPARATIVES:\n  1-syllable adjectives → add -er:\n     strong → stronger,  clear → clearer,  big → bigger\n  Adjectives ending -y → remove -y, add -ier:\n     likely → likelier,  costly → costlier\n  2+ syllable adjectives → use more / less:\n     significant → more significant\n     effective → less effective\n  Irregular:\n     good → better,  bad → worse,  far → further/farther\n\n⚠️ Do NOT combine -er and 'more':\n  ❌ \"more clearer\"  ✅ \"clearer\"\n⚠️ Do NOT use 'very' before a comparative:\n  ❌ \"very stronger\"  ✅ \"much stronger\" / \"far stronger\"\n\nMODIFIERS:\n  Large difference: much, far, a great deal, significantly\n    \"This is far more cost-effective than the alternative.\"\n  Small difference: a bit, slightly, a little\n    \"The opposition's evidence is slightly less convincing.\"\n\nUSEFUL COMPARATIVE STRUCTURES:\n  \"X is more effective than Y because…\"\n  \"The more we invest in education, the less inequality we will see.\"\n  \"This approach is no less important than economic growth.\"",
-       expJp:"比較級は2つのものを比べます。必ず「than」（「then」ではない！）を使います。\n1音節：-er追加 / -y終わり：-ierに変換 / 2音節以上：more/less / 不規則：better, worse, further\n強調修飾語：much, far, significantly / 弱め：a bit, slightly\n⚠️ -erとmoreを一緒に使わない！",
+       expJp:"比較級は2つのものを比べるときに使う。後ろは必ず「than」（「then」ではない）。
+短い形容詞は-er、長い形容詞はmore/less。不規則形：better / worse / further。
+-erとmoreは同時に使わない（more clearer ✗）。
+差を強調：much / far　差が小さい：a bit / slightly",
        exEn:"A universal basic income is a far more effective long-term solution to poverty than simply raising the minimum wage.",
        exJp:"ユニバーサル・ベーシック・インカムは、最低賃金を単に引き上げるよりも、貧困に対するはるかに効果的な長期的解決策です。",
        exEn2:"The more we invest in renewable energy now, the less dependent we will be on fossil fuels in the future."},
 
       {id:"g011",title:"Adverbs of Degree",
        exp:"Adverbs of degree modify adjectives or verbs to strengthen or weaken their meaning.\n\nGRADING adverbs — used with GRADABLE adjectives (those with a scale, e.g. important, effective, serious):\n  Strong:  extremely, very, really, remarkably, particularly, especially\n           \"This is an extremely important issue.\"\n  Middle:  fairly, quite, rather, pretty\n           \"The evidence is fairly convincing.\"\n  Weak:    not very, not particularly, barely, hardly\n           \"This argument is not particularly strong.\"\n\nNON-GRADING adverbs — used with NON-GRADABLE (absolute) adjectives (e.g. essential, impossible, unique, certain):\n  absolutely, completely, totally, entirely, utterly, perfectly\n  \"This approach is absolutely essential.\"\n  \"Their position is completely untenable.\"\n  virtually, practically, largely, mainly, almost entirely\n  \"This problem is virtually impossible without international cooperation.\"\n\n⚠️ COMMON MISTAKES:\n  ✅ \"very important\"        ❌ \"very essential\"\n  ✅ \"absolutely essential\"  ❌ \"absolutely important\"\n  (essential is absolute — it cannot be graded)\n\nWITH VERBS:\n  \"We really need to address this immediately.\"\n  \"This significantly undermines the opposition's argument.\"",
-       expJp:"程度の副詞は形容詞や動詞の意味を強めたり弱めたりします。\nグレーディング副詞（very, extremely, fairly など）：段階のある形容詞に使用。\n非グレーディング副詞（absolutely, completely, virtually など）：絶対的な形容詞に使用。\n⚠️ very + 絶対的形容詞はNG（very essential ✗ / absolutely essential ✓）",
+       expJp:"程度の副詞は形容詞・動詞の意味を強めたり弱めたりする。
+段階のある形容詞（important, effectiveなど）にはvery / extremely / fairlyを使う。
+絶対的な形容詞（essential, impossibleなど）にはabsolutely / completely / virtuallyを使う。
+⚠️ 「very essential」は間違い。「absolutely essential」が正しい。",
        exEn:"It is absolutely essential that all nations commit to reducing carbon emissions — a partial agreement is virtually meaningless.",
        exJp:"すべての国が炭素排出量の削減を約束することは絶対に不可欠です。部分的な合意は事実上意味がありません。",
        exEn2:"The opposition's proposal is fairly reasonable in theory, but it is extremely difficult to implement effectively in practice."},
 
       {id:"g012",title:"Inversion for Emphasis",
        exp:"Inversion reverses the normal subject-verb order to add emphasis and formal effect. Common in written debate cases and formal speeches.\n\nAFTER NEGATIVE ADVERBIALS (not only, not until, only when, only if, only then, little):\n  Normal:   \"She is not only a scientist; she is also a policy expert.\"\n  Inverted: \"Not only is she a scientist, but she is also a policy expert.\"\n\n  \"Not until the evidence is reviewed will a conclusion be reached.\"\n  \"Only when we address the root cause will the problem be solved.\"\n  \"Little do they realise how serious the long-term consequences are.\"\n  \"Only if we cooperate internationally can we solve this problem.\"\n\nAFTER TIME/FREQUENCY ADVERBIALS (no sooner, never, never before, rarely, seldom, hardly):\n  \"No sooner had the policy been introduced than it faced legal challenges.\"\n  \"Never before has this issue been so urgent.\"\n  \"Rarely do we see such a direct link between cause and effect.\"\n  \"Seldom has a policy received such widespread criticism.\"\n\nSO / NEITHER — to agree with a statement:\n  Positive agreement: \"So do we.\" / \"So does the evidence.\"\n  Negative agreement: \"Neither does the opposition.\" / \"Neither have we.\"\n\n⚠️ If there is no auxiliary verb, add DO:\n  \"Rarely does this approach succeed in practice.\"\n  \"Little do they understand the impact of this decision.\"",
-       expJp:"倒置は主語と動詞の通常の語順を逆転させ、強調や格式を表します。\nnot only, not until, only when, little などの否定・限定副詞句の後や、never before, rarely, no sooner などの頻度・時間副詞の後に使います。\nso（肯定同意）やneither（否定同意）の後にも使います。\n⚠️ 助動詞がない場合はdoを追加する。",
+       expJp:"倒置は強調やフォーマルな表現のために語順を逆転させる技法。
+not only / not until / only when / littleなどの後で使う。
+never before / rarely / no sooner などの後でも使う。
+so（肯定同意）やneither（否定同意）の後にも倒置が起きる。
+⚠️ 助動詞がない場合はdoを補う（Rarely does...）",
        exEn:"Not only does this policy fail to address the root causes of poverty, but it actively widens the gap between rich and poor.",
        exJp:"この政策は貧困の根本原因に対処できないだけでなく、富裕層と貧困層の格差を積極的に広げています。",
        exEn2:"Never before have we faced such an urgent need to act on climate change — and yet the opposition is proposing that we slow down reform."}
@@ -1382,6 +1427,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   checkUrlContent();
   resetDailyIfNeeded();
   applyUserPrefs();
+  // Load Google Translate after page is ready
+  setTimeout(loadGoogleTranslate, 800);
   renderHome();
   renderPacks();
   renderMyPacks();
@@ -1462,6 +1509,33 @@ function googleTranslateElementInit(){
     layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
     autoDisplay: false
   }, 'google_translate_element');
+}
+function loadGoogleTranslate(){
+  if(document.getElementById('gt-script')) return;
+  const s = document.createElement('script');
+  s.id = 'gt-script';
+  s.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+  s.onerror = function(){ 
+    // Fallback: show simple EN/JP toggle if Google fails to load
+    const el = document.getElementById('google_translate_element');
+    if(el) el.innerHTML = '<button onclick="toggleLangFallback()" style="font-family:var(--font-d);font-weight:700;font-size:.82rem;background:var(--card);color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer">EN / JP</button>';
+  };
+  document.head.appendChild(s);
+}
+function toggleLangFallback(){
+  USER.lang = USER.lang === 'jp' ? 'en' : 'jp';
+  saveUser(USER);
+  const page = document.querySelector('.page.active');
+  if(page){
+    const id = page.id.replace('page-','');
+    if(id==='vocabulary') renderVocabWithTags();
+    else if(id==='grammar') renderGrammar();
+    else if(id==='cases') renderCases();
+    else if(id==='templates') renderTemplates();
+    else if(id==='homework') renderHomework();
+    else if(id==='resources') renderResources();
+    else if(id==='home') renderHome();
+  }
 }
 
 /* ----------------------------------------------------------------
