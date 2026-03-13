@@ -196,6 +196,24 @@ body::before{
 .riddle-reveal-btn{font-family:var(--font-d);font-weight:700;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border-radius:8px;border:1px solid rgba(var(--accent-rgb),.3);color:var(--accent);background:rgba(var(--accent-rgb),.08);cursor:pointer;transition:all .2s}
 .riddle-reveal-btn:hover{background:rgba(var(--accent-rgb),.15)}
 .riddle-answer{margin-top:12px;padding:10px 14px;background:var(--bg3);border-radius:var(--radius);font-size:.88rem;color:var(--text2);line-height:1.5;border-left:3px solid var(--accent)}
+/* ================================================================
+   MY FOCUS
+   ================================================================ */
+.focus-add-area{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-top:8px}
+.focus-add-area textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px;color:var(--text);font-family:var(--font-b);font-size:.9rem;line-height:1.5;resize:none;box-sizing:border-box}
+.focus-add-area textarea::placeholder{color:var(--text3)}
+.focus-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;transition:all var(--tr)}
+.focus-item.done{opacity:.5}
+.focus-item.done .focus-text{text-decoration:line-through;color:var(--text3)}
+.focus-checkbox{width:24px;height:24px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--tr);margin-top:1px}
+.focus-checkbox.checked{background:var(--accent);border-color:var(--accent)}
+.focus-checkbox.checked::after{content:"✓";font-size:.85rem;font-weight:900;color:#0a0a0f}
+.focus-text{flex:1;font-size:.92rem;line-height:1.55;color:var(--text);padding-top:2px}
+.focus-date{font-size:.72rem;color:var(--text3);font-family:var(--font-d);letter-spacing:.04em;margin-top:4px}
+.focus-delete{color:var(--text3);font-size:.8rem;cursor:pointer;padding:2px 6px;border-radius:4px;transition:all var(--tr);flex-shrink:0;opacity:0;font-family:var(--font-d);font-weight:700}
+.focus-item:hover .focus-delete{opacity:1}
+.focus-delete:hover{color:#ff4757;background:rgba(255,71,87,.1)}
+.focus-empty{text-align:center;padding:32px 20px;color:var(--text3);font-size:.9rem;line-height:1.6}
 .quick-card-icon{font-size:1.5rem;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:rgba(var(--accent-rgb),.1);border-radius:10px}
 .quick-card-name{font-family:var(--font-d);font-weight:800;font-size:1rem;text-transform:uppercase;letter-spacing:.04em}
 .quick-card-desc{font-size:.78rem;color:var(--text3);line-height:1.4}
@@ -617,6 +635,7 @@ body{top:0!important}
     <button class="nav-item"        data-page="resources"  onclick="goPage('resources')">  <span class="nav-item-icon">📚</span> Resources</button>
     <button class="nav-item"        data-page="tools"      onclick="goPage('tools')">      <span class="nav-item-icon">🛠</span> Tools</button>
     <div class="nav-divider"></div>
+    <button class="nav-item"        data-page="focus"     onclick="goPage('focus')">     <span class="nav-item-icon">🎯</span> My Focus</button>
     <button class="nav-item"        data-page="settings"   onclick="goPage('settings')">   <span class="nav-item-icon">⚙️</span> Settings</button>
     <button class="nav-item nav-admin-item" onclick="goAdmin()"><span class="nav-item-icon">🔐</span> Teacher Panel</button>
   </div>
@@ -652,7 +671,7 @@ body{top:0!important}
   <div class="quick-grid">
     <div class="quick-card" onclick="goPage('flashcards')"><div class="quick-card-icon">⚡</div><div><div class="quick-card-name">Flashcards</div><div class="quick-card-desc">Teacher &amp; My Cards</div></div></div>
     <div class="quick-card" onclick="goPage('tools')">     <div class="quick-card-icon">🛠</div><div><div class="quick-card-name">Tools</div>      <div class="quick-card-desc">Timer, buzzers, coin</div></div></div>
-    <div class="quick-card" onclick="goPage('cases')">     <div class="quick-card-icon">⚖️</div><div><div class="quick-card-name">Case Studies</div><div class="quick-card-desc">Argument structures</div></div></div>
+    <div class="quick-card" onclick="goPage('grammar')">   <div class="quick-card-icon">✏️</div><div><div class="quick-card-name">Grammar</div><div class="quick-card-desc">Rules &amp; examples</div></div></div>
     <div class="quick-card" onclick="goPage('homework')">  <div class="quick-card-icon">📋</div><div><div class="quick-card-name">Homework</div><div class="quick-card-desc">Current tasks</div></div></div>
   </div>
   <div class="section-label">Announcements</div>
@@ -768,6 +787,17 @@ body{top:0!important}
 </section>
 
 <!-- ── SETTINGS ──────────────────────────────────── -->
+<!-- ── MY FOCUS ──────────────────────────────────── -->
+<section class="page" id="page-focus">
+  <div class="page-title">My <span>Focus</span></div>
+  <p class="page-subtitle">Things to work on — add a note, tick it off when you're ready to show your teacher.</p>
+  <div id="focus-list"></div>
+  <div class="focus-add-area">
+    <textarea id="focus-input" placeholder="e.g. Speak louder during rebuttals&#10;Work on conditional sentences&#10;Make eye contact with the audience" rows="3"></textarea>
+    <button class="btn btn-primary" onclick="addFocusItem()" style="width:100%;margin-top:8px">+ Add Focus Point</button>
+  </div>
+</section>
+
 <section class="page" id="page-settings">
   <div class="page-title">Set<span>tings</span></div>
   <div class="settings-streak-display">
@@ -1351,7 +1381,7 @@ function defaultUser(){
     hwDone:[]   // homework IDs marked done by this student
   };
 }
-function defaultMyData(){ return{ packs:[] } }
+function defaultMyData(){ return{ packs:[], focus:[] } }
 
 /* ----------------------------------------------------------------
    LOAD / SAVE
@@ -1401,6 +1431,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderVocabWithTags();
   renderGrammar();
   renderResources();
+  renderFocus();
   renderCases();
   renderTemplates();
   renderHomework();
@@ -1452,6 +1483,7 @@ function goPage(page){
   if(page==='vocabulary'){ vocabTagFilter=''; renderVocabWithTags(); }
   if(page==='grammar')    renderGrammar();
   if(page==='resources')  renderResources();
+  if(page==='focus')      renderFocus();
   if(page==='homework')   renderHomework();
   if(page==='templates')  renderTemplates();
   if(page==='cases')      renderCases();
@@ -3315,6 +3347,61 @@ function renderAdminResources(){
       </div>
       <button class="btn btn-danger btn-sm" onclick="deleteResource('${r.id}')">✕</button>
     </div>`).join('');
+}
+
+/* ================================================================
+   MY FOCUS
+   ================================================================ */
+function renderFocus(){
+  const list = document.getElementById('focus-list');
+  if(!list) return;
+  const items = (MY.focus||[]).slice().reverse();
+  if(!items.length){
+    list.innerHTML = '<div class="focus-empty">No focus points yet.<br>Add something your teacher has asked you to work on,<br>or something you want to improve yourself.</div>';
+    return;
+  }
+  list.innerHTML = items.map(f => `
+    <div class="focus-item${f.done?' done':''}" id="fi-${f.id}">
+      <div class="focus-checkbox${f.done?' checked':''}" onclick="toggleFocus('${f.id}')"></div>
+      <div style="flex:1;min-width:0">
+        <div class="focus-text">${esc(f.text)}</div>
+        <div class="focus-date">${f.done?'✓ Done · ':'Added '}${f.date||''}</div>
+      </div>
+      <span class="focus-delete" onclick="deleteFocusItem('${f.id}')">✕</span>
+    </div>`).join('');
+}
+function addFocusItem(){
+  const input = document.getElementById('focus-input');
+  const text = input.value.trim();
+  if(!text){ showToast('Write something to focus on first.'); return; }
+  // Split by newline so they can add multiple at once
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!MY.focus) MY.focus=[];
+  lines.forEach(line => {
+    MY.focus.push({
+      id: uid(),
+      text: line,
+      done: false,
+      date: new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})
+    });
+  });
+  saveMy(MY);
+  input.value='';
+  renderFocus();
+  showToast(lines.length>1?lines.length+' focus points added!':'Focus point added!');
+}
+function toggleFocus(id){
+  const item = (MY.focus||[]).find(f=>f.id===id);
+  if(!item) return;
+  item.done = !item.done;
+  if(item.done) item.date = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  saveMy(MY);
+  renderFocus();
+}
+function deleteFocusItem(id){
+  MY.focus = (MY.focus||[]).filter(f=>f.id!==id);
+  saveMy(MY);
+  renderFocus();
 }
 
 function downloadJSON(data,filename){ const a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));a.download=filename;a.click() }
