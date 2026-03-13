@@ -586,6 +586,7 @@ body{top:0!important}
 <header id="topbar">
   <div class="topbar-logo" onclick="goPage('home')" style="cursor:pointer">Debate<span>Lab</span></div>
   <div class="topbar-right">
+    <button id="jp-toggle-btn" onclick="toggleLangFallback()" title="Show Japanese summaries" style="font-family:var(--font-d);font-weight:800;font-size:.8rem;letter-spacing:.06em;padding:5px 10px;border-radius:8px;border:1px solid var(--border);color:var(--text3);background:var(--card);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0">日本語</button>
     <div id="google_translate_element" style="min-width:0"></div>
     <button class="hamburger-btn" id="hamburger-btn" onclick="toggleNav()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -1386,6 +1387,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   applyUserPrefs();
   // Load Google Translate after page is ready
   setTimeout(loadGoogleTranslate, 800);
+  updateJpBtn();
   renderHome();
   renderPacks();
   renderMyPacks();
@@ -1482,6 +1484,7 @@ function loadGoogleTranslate(){
 function toggleLangFallback(){
   USER.lang = USER.lang === 'jp' ? 'en' : 'jp';
   saveUser(USER);
+  updateJpBtn();
   const page = document.querySelector('.page.active');
   if(page){
     const id = page.id.replace('page-','');
@@ -1493,6 +1496,15 @@ function toggleLangFallback(){
     else if(id==='resources') renderResources();
     else if(id==='home') renderHome();
   }
+}
+function updateJpBtn(){
+  const btn = document.getElementById('jp-toggle-btn');
+  if(!btn) return;
+  const isJp = USER.lang === 'jp';
+  btn.textContent = isJp ? '日本語 ✓' : '日本語';
+  btn.style.color = isJp ? 'var(--accent)' : 'var(--text3)';
+  btn.style.borderColor = isJp ? 'rgba(var(--accent-rgb),.5)' : 'var(--border)';
+  btn.style.background = isJp ? 'rgba(var(--accent-rgb),.1)' : 'var(--card)';
 }
 
 /* ----------------------------------------------------------------
