@@ -190,6 +190,12 @@ body::before{
 .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
 .quick-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 16px;cursor:pointer;transition:all var(--tr);display:flex;flex-direction:column;gap:10px}
 .quick-card:hover{border-color:rgba(var(--accent-rgb),.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(var(--accent-rgb),.1)}
+.riddle-card{background:var(--card);border:1px solid rgba(var(--accent-rgb),.2);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;background:linear-gradient(135deg,rgba(var(--accent-rgb),.06),rgba(var(--accent-rgb),.02))}
+.riddle-label{font-family:var(--font-d);font-weight:800;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;opacity:.8}
+.riddle-question{font-size:.95rem;color:var(--text);line-height:1.55;margin-bottom:12px;font-weight:500}
+.riddle-reveal-btn{font-family:var(--font-d);font-weight:700;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border-radius:8px;border:1px solid rgba(var(--accent-rgb),.3);color:var(--accent);background:rgba(var(--accent-rgb),.08);cursor:pointer;transition:all .2s}
+.riddle-reveal-btn:hover{background:rgba(var(--accent-rgb),.15)}
+.riddle-answer{margin-top:12px;padding:10px 14px;background:var(--bg3);border-radius:var(--radius);font-size:.88rem;color:var(--text2);line-height:1.5;border-left:3px solid var(--accent)}
 .quick-card-icon{font-size:1.5rem;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:rgba(var(--accent-rgb),.1);border-radius:10px}
 .quick-card-name{font-family:var(--font-d);font-weight:800;font-size:1rem;text-transform:uppercase;letter-spacing:.04em}
 .quick-card-desc{font-size:.78rem;color:var(--text3);line-height:1.4}
@@ -642,6 +648,7 @@ body{top:0!important}
     <div class="daily-goal-pct" id="goal-pct">0%</div>
   </div>
   <div class="section-label">Quick Access</div>
+  <div id="home-riddle"></div>
   <div class="quick-grid">
     <div class="quick-card" onclick="goPage('flashcards')"><div class="quick-card-icon">⚡</div><div><div class="quick-card-name">Flashcards</div><div class="quick-card-desc">Teacher &amp; My Cards</div></div></div>
     <div class="quick-card" onclick="goPage('tools')">     <div class="quick-card-icon">🛠</div><div><div class="quick-card-name">Tools</div>      <div class="quick-card-desc">Timer, buzzers, coin</div></div></div>
@@ -1474,28 +1481,17 @@ function loadGoogleTranslate(){
   const s = document.createElement('script');
   s.id = 'gt-script';
   s.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-  s.onerror = function(){ 
-    // Fallback: show simple EN/JP toggle if Google fails to load
-    const el = document.getElementById('google_translate_element');
-    if(el) el.innerHTML = '<button onclick="toggleLangFallback()" style="font-family:var(--font-d);font-weight:700;font-size:.82rem;background:var(--card);color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer">EN / JP</button>';
-  };
+  s.onerror = function(){ console.log('Google Translate unavailable'); };
   document.head.appendChild(s);
 }
 function toggleLangFallback(){
   USER.lang = USER.lang === 'jp' ? 'en' : 'jp';
   saveUser(USER);
   updateJpBtn();
-  const page = document.querySelector('.page.active');
-  if(page){
-    const id = page.id.replace('page-','');
-    if(id==='vocabulary') renderVocabWithTags();
-    else if(id==='grammar') renderGrammar();
-    else if(id==='cases') renderCases();
-    else if(id==='templates') renderTemplates();
-    else if(id==='homework') renderHomework();
-    else if(id==='resources') renderResources();
-    else if(id==='home') renderHome();
-  }
+  // Show/hide JP elements in place — no scroll reset
+  document.querySelectorAll('.jp-content').forEach(el => {
+    el.style.display = USER.lang === 'jp' ? '' : 'none';
+  });
 }
 function updateJpBtn(){
   const btn = document.getElementById('jp-toggle-btn');
@@ -1528,6 +1524,29 @@ function confirmReset(){
 /* ----------------------------------------------------------------
    HOME
    ---------------------------------------------------------------- */
+const RIDDLES = [{"q": "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", "a": "An echo."}, {"q": "The more you take, the more you leave behind. What am I?", "a": "Footsteps."}, {"q": "I have cities, but no houses live there. I have mountains, but no trees grow there. I have water, but no fish swim there. What am I?", "a": "A map."}, {"q": "What can travel around the world while staying in a corner?", "a": "A stamp."}, {"q": "I'm light as a feather, yet the strongest person can't hold me for more than a few minutes. What am I?", "a": "Breath."}, {"q": "What has many keys but can't open a single lock?", "a": "A piano."}, {"q": "The person who makes it, sells it. The person who buys it, never uses it. The person who uses it, never knows they're using it. What is it?", "a": "A coffin."}, {"q": "I have hands but I cannot clap. What am I?", "a": "A clock."}, {"q": "What gets wetter the more it dries?", "a": "A towel."}, {"q": "I go around the world but stay in one spot. What am I?", "a": "A stamp."}, {"q": "What has a head and a tail but no body?", "a": "A coin."}, {"q": "You see me once in June, twice in November, but never in May. What am I?", "a": "The letter 'e'."}, {"q": "What has four fingers and a thumb, but is not alive?", "a": "A glove."}, {"q": "I shrink every time you use me. What am I?", "a": "A bar of soap \u2014 or a pencil."}, {"q": "What invention lets you look right through a wall?", "a": "A window."}, {"q": "If you drop me, I'm sure to crack. Give me a smile and I'll always smile back. What am I?", "a": "A mirror."}, {"q": "What can you catch but not throw?", "a": "A cold."}, {"q": "I have a neck but no head, and I wear a cap. What am I?", "a": "A bottle."}, {"q": "What runs but never walks, has a mouth but never talks, has a head but never weeps, has a bed but never sleeps?", "a": "A river."}, {"q": "What is full of holes but still holds water?", "a": "A sponge."}, {"q": "I'm always in front of you but cannot be seen. What am I?", "a": "The future."}, {"q": "What five-letter word becomes shorter when you add two letters to it?", "a": "Short. Add 'er' to make 'shorter'."}, {"q": "What has one eye but cannot see?", "a": "A needle."}, {"q": "I have branches and leaves but no fruit or roots. What am I?", "a": "A library."}, {"q": "What word is spelled incorrectly in every single dictionary?", "a": "The word 'incorrectly'."}, {"q": "What can you hold in your left hand but not in your right?", "a": "Your right elbow."}, {"q": "I have teeth but cannot eat. What am I?", "a": "A comb."}, {"q": "What gets bigger the more you take away from it?", "a": "A hole."}, {"q": "I'm not alive, but I grow. I don't have lungs, but I need air. What am I?", "a": "Fire."}, {"q": "What belongs to you but is used more by others?", "a": "Your name."}, {"q": "What has an eye in the middle of it?", "a": "A needle \u2014 or the letter 'i'."}];
+function renderRiddle(){
+  const el = document.getElementById('home-riddle');
+  if(!el) return;
+  const day = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+  const idx = day % RIDDLES.length;
+  const r = RIDDLES[idx];
+  const remaining = RIDDLES.length - idx;
+  // Show a low-stock warning to the teacher only when 5 or fewer riddles left in the cycle
+  const lowStock = remaining <= 5
+    ? `<div style="margin-top:10px;padding:6px 10px;background:rgba(255,140,66,.12);border:1px solid rgba(255,140,66,.3);border-radius:6px;font-size:.75rem;color:#FF8C42;font-family:var(--font-d);font-weight:700;letter-spacing:.04em">
+        ⚠️ TEACHER NOTE: ${remaining} riddle${remaining===1?'':'s'} left before cycle repeats — time to add more! (Admin → Settings)
+       </div>`
+    : '';
+  el.innerHTML = `
+    <div class="riddle-card">
+      <div class="riddle-label">🧩 Daily Riddle</div>
+      <div class="riddle-question">${r.q}</div>
+      <button class="riddle-reveal-btn" onclick="this.style.display='none';document.getElementById('riddle-ans').style.display='block'">Reveal Answer ▾</button>
+      <div id="riddle-ans" class="riddle-answer" style="display:none">${r.a}</div>
+      ${lowStock}
+    </div>`;
+}
 function renderHome(){
   const h=new Date().getHours();
   document.getElementById('home-greeting').textContent=h<12?'Good morning, debater':h<17?'Good afternoon, debater':'Good evening, debater';
@@ -1546,6 +1565,7 @@ function renderHome(){
   updateStreakDisplay();
   updateGoalDisplay();
   renderAnnouncements();
+  renderRiddle();
 }
 function renderAnnouncements(){
   const list=document.getElementById('announcements-list');
@@ -1874,7 +1894,7 @@ function renderVocab(search=''){
         <button class="btn btn-secondary btn-sm" style="margin-left:auto;font-size:.72rem;padding:3px 10px;flex-shrink:0" onclick="event.stopPropagation();openAddToMyCardsById('${v.id}')" title="Add to My Cards">＋ My Cards</button>
       </div>
       <div class="vocab-def">${esc(v.def)}</div>
-      ${showJp&&v.jp?`<div class="vocab-jp-text">${esc(v.jp)}</div>`:''}
+      <div class="vocab-jp-text jp-content" style="display:${USER.lang==='jp'&&v.jp?'':'none'}">${esc(v.jp||'')}</div>
       ${v.example?`<div class="vocab-example">"${esc(v.example)}"</div>`:''}
     </div>`).join('');
 }
@@ -1986,12 +2006,12 @@ function renderGrammar(){
       <div class="grammar-body">
         <div class="grammar-content">
           ${formatGrammarText(g.exp)}
-          ${showJp&&g.expJp?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">${formatGrammarText(g.expJp)}</div>`:''}
+          <div class="jp-content" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:${USER.lang==='jp'?'':'none'}">${g.expJp?formatGrammarText(g.expJp):''}</div>
           ${g.exEn?`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
             <div class="grammar-ex-label">📝 Debate Examples</div>
             <div class="grammar-example-box">
               <div class="grammar-example-en">${esc(g.exEn)}</div>
-              ${showJp&&g.exJp?`<div class="grammar-example-jp">${esc(g.exJp)}</div>`:''}
+              <div class="grammar-example-jp jp-content" style="display:${USER.lang==='jp'&&g.exJp?'':'none'}">${esc(g.exJp||'')}</div>
             </div>
             ${g.exEn2?`<div class="grammar-example-box"><div class="grammar-example-en">${esc(g.exEn2)}</div></div>`:''}
           </div>`:''}
@@ -2035,17 +2055,17 @@ function renderCases(){
         <div class="case-section">
           <div class="case-section-label">📌 Point</div>
           <div class="case-section-text">${esc(c.point)}</div>
-          ${showJp&&c.pointJp?`<div class="case-section-text jp" style="font-family:var(--font-jp);font-size:.85rem;color:var(--text3);margin-top:6px">${esc(c.pointJp)}</div>`:''}
+          <div class="case-section-text jp jp-content" style="font-family:var(--font-jp);font-size:.85rem;color:var(--text3);margin-top:6px;display:${USER.lang==='jp'&&c.pointJp?'':'none'}">${esc(c.pointJp||'')}</div>
         </div>
         ${c.reason?`<div class="case-section">
           <div class="case-section-label">💡 Reason</div>
           <div class="case-section-text">${esc(c.reason)}</div>
-          ${showJp&&c.reasonJp?`<div class="case-section-text jp" style="font-family:var(--font-jp);font-size:.85rem;color:var(--text3);margin-top:6px">${esc(c.reasonJp)}</div>`:''}
+          <div class="case-section-text jp jp-content" style="font-family:var(--font-jp);font-size:.85rem;color:var(--text3);margin-top:6px;display:${USER.lang==='jp'&&c.reasonJp?'':'none'}">${esc(c.reasonJp||'')}</div>
         </div>`:''}
         ${c.evidence?`<div class="case-section">
           <div class="case-section-label">📊 Evidence</div>
           <div class="case-section-text">${esc(c.evidence)}</div>
-          ${showJp&&c.evidenceJp?`<div class="case-section-text jp" style="font-family:var(--font-jp);font-size:.85rem;color:var(--text3);margin-top:6px">${esc(c.evidenceJp)}</div>`:''}
+          <div class="case-section-text jp jp-content" style="font-family:var(--font-jp);font-size:.85rem;color:var(--text3);margin-top:6px;display:${USER.lang==='jp'&&c.evidenceJp?'':'none'}">${esc(c.evidenceJp||'')}</div>
         </div>`:''}
         ${c.vocab&&c.vocab.length?`<div class="case-section">
           <div class="case-section-label">🔤 Key Vocabulary</div>
@@ -2080,7 +2100,7 @@ function renderTemplates(){
             <div class="template-step-content">
               <div class="template-step-title">${esc(s.title)}</div>
               <div class="template-step-desc">${esc(s.desc)}</div>
-              ${showJp&&s.descJp?`<div class="template-step-jp jp">${esc(s.descJp)}</div>`:''}
+              <div class="template-step-jp jp jp-content" style="display:${USER.lang==='jp'&&s.descJp?'':'none'}">${esc(s.descJp||'')}</div>
             </div>
           </div>`).join('')}
       </div>
@@ -2108,7 +2128,7 @@ function renderHomework(){
       ${hw.due&&(!soon||done)?`<div class="hw-due-badge" style="background:rgba(255,255,255,.05);border-color:var(--border);color:var(--text3)">📅 ${hw.due}</div>`:''}
       <div class="hw-title">${esc(hw.title)}</div>
       <div class="hw-body">${esc(hw.body)}</div>
-      ${showJp&&hw.jp?`<div class="hw-body jp" style="font-family:var(--font-jp);font-size:.85rem;color:var(--text3);margin-top:6px">${esc(hw.jp)}</div>`:''}
+      <div class="hw-body jp jp-content" style="font-family:var(--font-jp);font-size:.85rem;color:var(--text3);margin-top:6px;display:${USER.lang==='jp'&&hw.jp?'':'none'}">${esc(hw.jp||'')}</div>
       ${hw.due?`<div class="hw-date">📅 Due: ${hw.due}</div>`:''}
       <div class="hw-done-row">
         <div class="hw-check${done?' checked':''}" onclick="toggleHwDone('${hw.id}')"></div>
@@ -3234,7 +3254,7 @@ function renderResources(){
         <div class="res-card-icon res-icon-${esc(r.type)}">${RES_ICONS[r.type]||'📎'}</div>
         <div class="res-card-text">
           <div class="res-card-title">${esc(r.title)}</div>
-          <div class="res-card-desc">${esc(showJp && r.descJp ? r.descJp : r.desc)}</div>
+          <div class="res-card-desc">${esc(r.desc)}</div><div class="res-card-desc jp-content" style="display:${USER.lang==='jp'&&r.descJp?'':'none'};font-family:var(--font-jp);font-size:.8rem;color:var(--text3)">${esc(r.descJp||'')}</div>
         </div>
       </div>
       <div class="res-card-footer">
