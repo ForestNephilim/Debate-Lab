@@ -1069,6 +1069,15 @@ body{top:0!important}
           <button class="btn btn-primary btn-sm" onclick="addCard()">Add Card</button>
           <button class="btn btn-ghost btn-sm" onclick="cancelAddCard()" style="margin-left:8px">Close</button>
         </div>
+        <div class="admin-add-form" style="margin-top:12px">
+          <div class="admin-add-title">📋 Bulk Add Cards to Pack</div>
+          <div style="font-size:.82rem;color:var(--text2);margin-bottom:10px;line-height:1.6">
+            One card per line, pipe-separated:<br>
+            <code style="color:var(--accent)">Word | Definition | Japanese (optional) | Example (optional)</code>
+          </div>
+          <textarea id="fc-bulk-input" rows="8" placeholder="picky eater | A person who only likes certain foods | 好き嫌いが多い人 | She is a picky eater who refuses vegetables.&#10;preference | Something a person likes more than others | 好み | Everyone has different food preferences." style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px;color:var(--text);font-size:.84rem;font-family:monospace;resize:vertical;box-sizing:border-box"></textarea>
+          <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="bulkAddCardsToPackAdmin()">📋 Bulk Add Cards</button>
+        </div>
         <div id="admin-cards-list"></div>
       </div>
     </div>
@@ -2866,6 +2875,34 @@ function openAddCardForm(packId){
   document.getElementById('add-card-pack-label').textContent=pack.name;
   document.getElementById('add-card-form').style.display='';
   renderAdminCardsList(packId);
+}
+function bulkAddCardsToPackAdmin(){
+  const packId = currentEditPackId;
+  if(!packId){ showToast('No pack selected.'); return; }
+  const raw = document.getElementById('fc-bulk-input').value.trim();
+  if(!raw){ showToast('Nothing to add.'); return; }
+  const pack = DB.packs.find(p=>p.id===packId);
+  if(!pack){ showToast('Pack not found.'); return; }
+  const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  let added = 0;
+  lines.forEach(line => {
+    const parts = line.split('|').map(p=>p.trim());
+    if(parts.length < 2) return;
+    pack.cards.push({
+      id: uid(),
+      word: parts[0],
+      def:  parts[1],
+      jp:   parts[2]||'',
+      exampleJp: '',
+      example: parts[3]||''
+    });
+    added++;
+  });
+  saveDB(DB);
+  renderAdminCardsList(packId);
+  renderPacks();
+  document.getElementById('fc-bulk-input').value='';
+  showToast(added+' card'+(added===1?'':'s')+' added!');
 }
 function cancelAddCard(){ currentEditPackId=null; document.getElementById('add-card-form').style.display='none'; document.getElementById('admin-cards-list').innerHTML='' }
 function addCard(){
